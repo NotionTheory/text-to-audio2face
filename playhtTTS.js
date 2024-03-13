@@ -15,8 +15,8 @@ const TTS_CONFIG = {
 export async function convertTextToSpeech(textStream) {
   // Initialize PlayHT with API keys from environment variables
   PlayHT.init({
-    apiKey: process.env.PLAYHT_API_KEY,
-    userId: process.env.PLAYHT_USER_ID,
+    apiKey: "5350b83874b24f5a936c99371ab77fcb",
+    userId: "Ta6l4gZ6jlgOgO2ju7PIkvFYBg13",
   });
 
   // Convert the provided text stream to speech using PlayHT

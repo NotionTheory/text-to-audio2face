@@ -6,8 +6,8 @@ import ffmpegPath from 'ffmpeg-static';
 import { Transform } from 'stream';
 
 // Configuration constants
-const PROTO_PATH = "C:/Users/houar/AppData/Local/ov/pkg/audio2face-2023.2.0/exts/omni.audio2face.player/omni/audio2face/player/scripts/streaming_server/proto/audio2face.proto";
-const A2F_INSTANCE_NAME = '/World/audio2face/PlayerStreaming';
+const PROTO_PATH = "C:/Users/Dave/AppData/Local/ov/pkg/deps/b9070d65cb1908ec472cf47bc29f8126/exts/omni.audio2face.player/omni/audio2face/player/scripts/streaming_server/proto/audio2face.proto";
+const A2F_INSTANCE_NAME = '/World/audio2face/PlayerStreaming_03';
 const A2F_SERVER_ADDRESS = 'localhost:50051';
 const audioBitrate = 24000;
 

@@ -27,39 +27,16 @@ const audio2faceProto = grpc.loadPackageDefinition(packageDefinition).nvidia.aud
 // gRPC client for audio2face
 const client = new audio2faceProto.Audio2Face(A2F_SERVER_ADDRESS, grpc.credentials.createInsecure());
 
-// Transform stream to convert audio buffer to float32 array
-class AudioBufferToFloat32Transform extends Transform {
-  _transform(chunk, encoding, callback) {
-    const int16Array = new Int16Array(chunk.buffer, chunk.byteOffset, chunk.length / Int16Array.BYTES_PER_ELEMENT);
-    const float32Array = new Float32Array(int16Array.length);
-    int16Array.forEach((int16, i) => {
-      float32Array[i] = int16 / 32768.0;
-    });
-    this.push(Buffer.from(float32Array.buffer));
-    callback();
-  }
-}
-
 // Function to stream audio to Audio2Face
 export async function streamAudioToA2F(ttsStream) {
   // Create an instance of AudioBufferToFloat32Transform
-  const audioTransform = new AudioBufferToFloat32Transform();
+  // const audioTransform = new AudioBufferToFloat32Transform();
     
   // Setup the gRPC call for streaming audio
   const call = client.PushAudioStream((error) => {
     if (error) {
       console.error('Error during PushAudioStream:', error);
     }
-  });
-
-  // Handle data events for the audio transform
-  audioTransform.on('data', (float32Buffer) => {
-    call.write({ audio_data: float32Buffer });
-  });
-
-  // Handle the end of the audio transform stream
-  audioTransform.on('end', () => {
-    call.end();
   });
 
   // Write start marker to the gRPC call
@@ -71,11 +48,14 @@ export async function streamAudioToA2F(ttsStream) {
     }
   });
 
-  // Configure FFmpeg and start processing the TTS stream
-  ffmpeg(ttsStream)
-    .inputFormat('mp3')
-    .audioFrequency(audioBitrate)
-    .audioChannels(1)
-    .format('s16le')
-    .pipe(audioTransform, { end: true });
+  // Handle data events for the audio transform
+  const int16Array = new Int16Array(ttsStream.buffer, ttsStream.byteOffset, ttsStream.length / Int16Array.BYTES_PER_ELEMENT);
+  const float32Array = new Float32Array(int16Array.length);
+  int16Array.forEach((int16, i) => {
+    float32Array[i] = int16 / 32768.0;
+  });
+
+  call.write({ audio_data: Buffer.from(float32Array.buffer) });
+
+  call.end();
 }

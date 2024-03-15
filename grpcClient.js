@@ -26,12 +26,6 @@ const audio2faceProto = grpc.loadPackageDefinition(packageDefinition).nvidia.aud
 
 // gRPC client for audio2face
 const client = new audio2faceProto.Audio2Face(A2F_SERVER_ADDRESS, grpc.credentials.createInsecure());
-
-// Function to stream audio to Audio2Face
-export async function streamAudioToA2F(ttsStream) {
-  // Create an instance of AudioBufferToFloat32Transform
-  // const audioTransform = new AudioBufferToFloat32Transform();
-    
   // Setup the gRPC call for streaming audio
   const call = client.PushAudioStream((error) => {
     if (error) {
@@ -48,6 +42,11 @@ export async function streamAudioToA2F(ttsStream) {
     }
   });
 
+// Function to stream audio to Audio2Face
+export async function streamAudioToA2F(ttsStream) {
+  // Create an instance of AudioBufferToFloat32Transform
+  // const audioTransform = new AudioBufferToFloat32Transform();
+    
   // Handle data events for the audio transform
   const int16Array = new Int16Array(ttsStream.buffer, ttsStream.byteOffset, ttsStream.length / Int16Array.BYTES_PER_ELEMENT);
   const float32Array = new Float32Array(int16Array.length);
@@ -57,5 +56,5 @@ export async function streamAudioToA2F(ttsStream) {
 
   call.write({ audio_data: Buffer.from(float32Array.buffer) });
 
-  call.end();
+  // call.end();
 }

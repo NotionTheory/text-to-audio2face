@@ -8,7 +8,7 @@ import EventEmitter from 'events';
 import axios from 'axios';
 import expressWs from 'express-ws'; // Import express-ws
 
-import { streamAudioToA2F } from './grpcClient.js';
+import { streamAudioToA2F, endCall } from './grpcClient.js';
 
 dotenv.config();
 EventEmitter.defaultMaxListeners = 100;
@@ -52,6 +52,7 @@ app.ws('/websocket', (ws, req) => {
   // Close the WebSocket connection
   ws.on('close', () => {
     console.log('WebSocket connection closed');
+    endCall();
   });
 });
 

@@ -50,11 +50,17 @@ export async function streamAudioToA2F(ttsStream) {
   // Handle data events for the audio transform
   const int16Array = new Int16Array(ttsStream.buffer, ttsStream.byteOffset, ttsStream.length / Int16Array.BYTES_PER_ELEMENT);
   const float32Array = new Float32Array(int16Array.length);
+  const gain = 2.0; // Adjust this value to change the amplification level
+
   int16Array.forEach((int16, i) => {
-    float32Array[i] = int16 / 32768.0;
+    float32Array[i] = (int16 / 32768.0) * gain;
   });
 
   call.write({ audio_data: Buffer.from(float32Array.buffer) });
 
   // call.end();
+}
+
+export async function endCall() {
+  call.end();
 }
